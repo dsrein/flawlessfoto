@@ -1,7 +1,6 @@
 package apis;
 
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +28,7 @@ public class Clarifai {
 		        .predict()
 		        .withInputs(
 		            ClarifaiInput.forImage(ClarifaiImage.of(url))
+//		             ClarifaiInput.forImage(ClarifaiImage.of(new File("/home/user/image.jpeg"))))
 		        ).executeSync().get();
 	}
 
@@ -80,7 +80,7 @@ public class Clarifai {
 	
 	public static void main(String[] args){
 		Clarifai myClarifai = new Clarifai();
-		List<String> names = myClarifai.getAttributes("https://samples.clarifai.com/metro-north.jpg");
+		// List<String> names = myClarifai.getAttributes("https://samples.clarifai.com/metro-north.jpg");
 		List<String> names2 = myClarifai.getNAttributes("https://samples.clarifai.com/metro-north.jpg", 3);
 		
 		for(String name: names2){
