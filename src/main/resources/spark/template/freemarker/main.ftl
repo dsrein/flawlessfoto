@@ -26,7 +26,7 @@
            context: {
              artist: {
                identifiers: {
-                 itunes: 'id1419227' // Beyonce
+                 itunes: '1419227' // Beyonce
                }
              }
            }
