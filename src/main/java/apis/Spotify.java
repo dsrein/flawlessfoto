@@ -1,51 +1,78 @@
 package apis;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
-import com.google.common.escape.Escaper;
-import com.google.common.net.UrlEscapers;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.wrapper.spotify.Api;
+import com.wrapper.spotify.exceptions.WebApiException;
+import com.wrapper.spotify.methods.AddTrackToPlaylistRequest;
 import com.wrapper.spotify.methods.PlaylistCreationRequest;
 import com.wrapper.spotify.methods.TrackSearchRequest;
 import com.wrapper.spotify.methods.authentication.ClientCredentialsGrantRequest;
+import com.wrapper.spotify.models.AuthorizationCodeCredentials;
 import com.wrapper.spotify.models.ClientCredentials;
 import com.wrapper.spotify.models.Page;
+import com.wrapper.spotify.models.Playlist;
 import com.wrapper.spotify.models.Track;
 
-import utils.ApiUtils;
 
 public class Spotify {
  
   private final String ID = "43523841033c4694ba2f5ae7ec0f619c";
   private final String SECRET = "e7264805a5a54d3ca6e4a6f562911aaa";
-  private String userId;
   private String name;
-  
-  Api api = Api.builder()
-		  .clientId(ID)
-		  .clientSecret(SECRET)
-		  .redirectURI("http://localhost:8888/callback")
-		  .build();
-  
+  private Playlist playlist;
+  private List<String> tracksToAdd;
+  private int insertIndex;
+  private String redirectURI = "http://localhost:4569";
+  private Api api;
+  private String userId;
+  /* Set the necessary scopes that the application will need from the user */
+  private final List<String> scopes = Arrays.asList("user-read-private", "user-read-email");
+  /* Set a state. This is used to prevent cross site request forgeries. */
+  private String state;
   /* Create a request object. */
-  final ClientCredentialsGrantRequest request = api.clientCredentialsGrant().build();
-
-  /* Use the request object to make the request, either asynchronously (getAsync) or synchronously (get) */
-  final SettableFuture<ClientCredentials> responseFuture = request.getAsync();
+  private final ClientCredentialsGrantRequest request;
+  private final SettableFuture<ClientCredentials> responseFuture;
+  private String authorizeUrl;
+  private String accessToken;
   
-  public Spotify(String userId, String name) {
-	  this.userId = userId;
+  
+  public Spotify(String name) {
+	  api = Api.builder()
+			  .clientId(ID)
+			  .clientSecret(SECRET)
+			  .redirectURI(redirectURI)
+			  .build();
+
+	  request = api.clientCredentialsGrant().build();
+
+	  /* Use the request object to make the request, either asynchronously (getAsync) or synchronously (get) */
+	  responseFuture = request.getAsync();
 	  this.name = name;
+	  tracksToAdd = new ArrayList<>();
+	  insertIndex = 0;
+  }
+  
+  protected String generateRandString() {
+      String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+      StringBuilder salt = new StringBuilder();
+      Random rnd = new Random();
+      while (salt.length() < 16) { // length of the random string.
+          int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+          salt.append(SALTCHARS.charAt(index));
+      }
+      String saltStr = salt.toString();
+      return saltStr;
+
   }
   
   private class PopComp implements Comparator<Track> {
@@ -55,7 +82,57 @@ public class Spotify {
 			return cmp;
 		}
 	  }
+  
+  public String getAuthrizeUrl() {
+	  System.out.println("trying to authorize url");
+	  state = generateRandString();
+	  System.out.println(state);
+	  authorizeUrl = api.createAuthorizeURL(scopes, state);
+	  System.out.println("returning authorize URL "  + authorizeUrl);
+	  return authorizeUrl;
+  }
+  
+  public void setUser() throws IOException, WebApiException {
+	  userId = api.getMe().build().get().getId();
+	  System.out.println(userId);
+  }
 
+  public void authorize() {
+	  
+	  /* Application details necessary to get an access token */
+	  final String code = redirectURI;
+
+	  /* Make a token request. Asynchronous requests are made with the .getAsync method and synchronous requests
+	   * are made with the .get method. This holds for all type of requests. */
+	  final SettableFuture<AuthorizationCodeCredentials> authorizationCodeCredentialsFuture = api.authorizationCodeGrant(code).build().getAsync();
+
+	  /* Add callbacks to handle success and failure */
+	  Futures.addCallback(authorizationCodeCredentialsFuture, new FutureCallback<AuthorizationCodeCredentials>() {
+	    @Override
+	    public void onSuccess(AuthorizationCodeCredentials authorizationCodeCredentials) {
+	      /* The tokens were retrieved successfully! */
+	      accessToken = authorizationCodeCredentials.getAccessToken();
+	      System.out.println("Successfully retrieved an access token! " + accessToken);
+	      System.out.println("The access token expires in " + authorizationCodeCredentials.getExpiresIn() + " seconds");
+	      System.out.println("Luckily, I can refresh it using this refresh token! " +     authorizationCodeCredentials.getRefreshToken());
+	    
+	      /* Set the access token and refresh token so that they are used whenever needed */
+	      api.setAccessToken(authorizationCodeCredentials.getAccessToken());
+	      api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
+	      api = Api.builder()
+	    		  .accessToken(authorizationCodeCredentials.getAccessToken())
+	    		  .refreshToken(authorizationCodeCredentials.getRefreshToken())
+	    		  .build();
+	    }
+
+	    @Override
+	    public void onFailure(Throwable throwable) {
+	      /* Let's say that the client id is invalid, or the code has been used more than once,
+	       * the request will fail. Why it fails is written in the throwable's message. */
+	    	System.out.println("failure authorizing");
+	    	System.out.println(throwable.getMessage());
+	    }}); 
+  }
   
   public Track getTracksFromKeyword(String keyword) throws IOException {
 	/*  Escaper escape = UrlEscapers.urlPathSegmentEscaper();
@@ -68,6 +145,11 @@ public class Spotify {
 	     if (results.size() == 0) {
 	    	 return null;
 	     }
+	     tracksToAdd.add(results.get(0).getUri());
+	     if (playlist == null) {
+	    	 startAPlaylist();
+	     }
+	     addTracksToPlaylist();
 	     return results.get(0);
 	    // System.out.println("I got " + trackSearchResult.getTotal() + " results!");
 	  } catch (Exception e) {
@@ -76,16 +158,27 @@ public class Spotify {
 	 return null;	  
   }
   
-  public void makePlaylist() {
+  public void startAPlaylist() {
 	  final PlaylistCreationRequest request = api.createPlaylist(userId, name)
 			  .publicAccess(true)
 			  .build();
-
 			try {
-			  final com.wrapper.spotify.models.Playlist playlist = request.get();
-			  
+			  playlist = request.get();
 			  System.out.println("You just created this playlist!");
 			  System.out.println("Its title is " + playlist.getName());
+			} catch (Exception e) {
+			   System.out.println("Something went wrong!" + e.getMessage());
+			}
+  }
+  
+  public void addTracksToPlaylist() {
+	  AddTrackToPlaylistRequest request = api.addTracksToPlaylist(userId, playlist.getId() , tracksToAdd)
+			  .position(insertIndex)
+			  .build();			  
+			try {
+			  request.get();
+			  insertIndex += tracksToAdd.size();
+			  tracksToAdd.clear();
 			} catch (Exception e) {
 			   System.out.println("Something went wrong!" + e.getMessage());
 			}
