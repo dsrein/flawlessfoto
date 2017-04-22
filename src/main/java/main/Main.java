@@ -27,8 +27,9 @@ import apis.Spotify;
 
 public class Main {
 	
-	  private static final int DEFAULT_PORT = 4567;
+	  private static final int DEFAULT_PORT = 4569;
 	  private static final Gson GSON = new Gson();
+	  private Spotify spot;
 	/**
 	   * The initial method called when execution begins .
 	   *
@@ -44,7 +45,7 @@ public class Main {
 	  
 	  private void run() throws IOException{
 
-		  //Spotify spot = new Spotify();
+		 spot = new Spotify("lala");
 		 // spot.getTracksFromKeyword("little bird");
 		    // Parse command line arguments
 		  runSparkServer();
@@ -72,13 +73,26 @@ public class Main {
 	    FreeMarkerEngine freeMarker = createEngine();
 	    // Setup Spark Routes
 	    Spark.get("/", new FrontHandler(), freeMarker);
+	    Spark.post("/redirect", new LoginHandler());
 	  }
+	  
+	  private class LoginHandler implements Route {
+		    @Override
+		    public Object handle(Request arg0, Response arg1) throws Exception {
+		      System.out.println("login");
+		      String url = spot.getAuthrizeUrl();
+		      System.out.println(url.length());
+		      spot.authorize();
+		   //   spot.setUser();
+		      return GSON.toJson(ImmutableMap.of("url", url));
+		    }
+	}
 	  
 	  private static class FrontHandler implements TemplateViewRoute {
 		    @Override
 		    public ModelAndView handle(Request req, Response res) {
 		      Map<String, Object> variables = ImmutableMap.of("title",
-		          "Stars: Query the database");
+		          "Party");
 		      return new ModelAndView(variables, "home.ftl");
 		    }
 		  }
