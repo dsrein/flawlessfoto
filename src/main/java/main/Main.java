@@ -78,7 +78,7 @@ public class Main {
 		    @Override
 		    public ModelAndView handle(Request req, Response res) {
 		      Map<String, Object> variables = ImmutableMap.of("title",
-		          "Stars: Query the database");
+		          "Life of the Party!");
 		      return new ModelAndView(variables, "home.ftl");
 		    }
 		  }
