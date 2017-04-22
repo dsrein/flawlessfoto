@@ -24,7 +24,7 @@
        defaults: {
          'btn-4e680ef15e505fe9': {
            context: {
-             item: {
+             artist: {
                identifiers: {
                  itunes: 'id1419227' // Beyonce
                }
