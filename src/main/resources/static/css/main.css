@@ -36,7 +36,16 @@ div.gallery:hover {
 }
 
 div.gallery.active {
-    border: 1.5px solid blue;
+    border: 2px solid blue;
+}
+
+#spot{
+	display: -webkit-flex;
+    display: flex;
+    padding: 20px;
+}
+#box{
+	margin:auto;
 }
 
 .container{ width:100%; }
@@ -65,15 +74,6 @@ div.desc {
     text-align: center;
 }
 
-div#largePhoto{
-	padding-top: 100px;
-	display: none;
-	display: -webkit-flex;
-    display: flex;
-}
-div#largePhoto img{
-	margin: auto;
-}
 div#wrapper{
 	width: 100%;
 	padding-top: 25px;

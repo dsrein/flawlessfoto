@@ -1,18 +1,65 @@
-$(function(){
-  $(".gallery").click(function(e){
-	  console.log("HELLO!??!");
-	  e.preventDefault();
-//	  if(this.hasClass("active")){
-//		  $(".gallery").removeClass("active");
-//		  $("#largePhoto").hide();   
-//	  } else {
-		  $(".gallery").addClass("active").not(this).removeClass("active"); 
-		  
-		  $("#largePhoto").show();       
-//	  }
-             
-  });
+$('#right').click(function(){
+	var one = $('.one img')[0].src;
+	var two = $('.two img')[0].src;
+	var three = $('.three img')[0].src;
+	var four = $('.two img')[1].src;
+	var five = $('.one img')[1].src;
+	
+
+	$('.one img')[0].src = five;
+	$('.two img')[0].src = one;
+	$('.three img')[0].src = two;
+	$('.two img')[1].src = three;
+	$('.one img')[1].src = four;
+	
+	one = $('.one img')[0].alt;
+	two = $('.two img')[0].alt;
+	three = $('.three img')[0].alt;
+	four = $('.two img')[1].alt;
+	five = $('.one img')[1].alt;
+
+	$('.one img')[0].alt = five;
+	$('.two img')[0].alt = one;
+	$('.three img')[0].alt = two;
+	$('.two img')[1].alt = three;
+	$('.one img')[1].alt = four;
+
 });
+
+
+$('#left').click(function(){
+	var one = $('.one img')[0];
+	var two = $('.two img')[0];
+	var three = $('.three img')[0];
+	var four = $('.two img')[1];
+	var five = $('.one img')[1];
+	
+
+	$('.one img')[0].src = two.src;
+	$('.two img')[0].src = three.src;
+	$('.three img')[0].src = four.src;
+	$('.two img')[1].src = five.src;
+	$('.one img')[1].src = one.src;
+	
+	one = $('.one img')[0].alt;
+	two = $('.two img')[0].alt;
+	three = $('.three img')[0].alt;
+	four = $('.two img')[1].alt;
+	five = $('.one img')[1].alt;
+
+	$('.one img')[0].alt = two;
+	$('.two img')[0].alt = three;
+	$('.three img')[0].alt = four;
+	$('.two img')[1].alt = five;
+	$('.one img')[1].alt = one;
+
+	console.log($('.one img')[0].src);
+	console.log($('.two img')[0].src);
+	console.log($('.three img')[0].src);
+	console.log($('.two img')[1].src);	
+	console.log($('.one img')[1].src);
+});
+
 
 const $button = $("#button");
  $button.click(function(){

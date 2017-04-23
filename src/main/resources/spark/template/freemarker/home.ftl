@@ -1,12 +1,12 @@
 <#assign content>
-<<<<<<< HEAD
 		<h1 id="title"> Life of the Party! </h1>
-		<button id="add">Default Button</button>
+		
+<button id="button"> party!! </button>
 <div id="wrapper">
 	<div id="grid">
-		<a href="#" class="btn-arrow btn-arrow-left"></a>
-		<div class="gallery one">
-		    <img src="fjords.jpg" alt="Fjords" width="150" height="125">
+		<div class="btn-arrow btn-arrow-left" id="left"></div>
+		<div class="gallery one" id="one">
+		    <img src="../photos/dad.jpg" alt="Fjords" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
 		
@@ -29,44 +29,17 @@
 		    <img src="mountains.jpg" alt="Mountains" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
-		<a href="#" class="btn-arrow btn-arrow-right"></a>
-=======
-
-<h1 id="title"> Life of the Party! </h1>
-<button id="button"> party!! </button>
-<div id="grid">
-	<div class="gallery">
-	  <a target="_blank" href="fjords.jpg">
-	    <img src="fjords.jpg" alt="Fjords" width="300" height="200">
-	  </a>
-	  <div class="desc">Add a description of the image here</div>
-	</div>
-	
-	<div class="gallery">
-	  <a target="_blank" href="forest.jpg">
-	    <img src="forest.jpg" alt="Forest" width="300" height="200">
-	  </a>
-	  <div class="desc">Add a description of the image here</div>
-	</div>
-	
-	<div class="gallery">
-	  <a target="_blank" href="lights.jpg">
-	    <img src="lights.jpg" alt="Northern Lights" width="300" height="200">
-	  </a>
-	  <div class="desc">Add a description of the image here</div>
-	</div>
-	
-	<div class="gallery">
-	  <a target="_blank" href="mountains.jpg">
-	    <img src="mountains.jpg" alt="Mountains" width="300" height="200">
-	  </a>
-	  <div class="desc">Add a description of the image here</div>
->>>>>>> e1a2bac77ddfbde6b93442fb07c4882f7ba312cb
+		<div class="btn-arrow btn-arrow-right" id="right"></div>
 	</div>
 </div>
 
 <div id="largePhoto">
-	  <img src="mountains.jpg" alt="Mountains" width="450" height="300">
+
+
 </div>
+
+<div id="spot">
+	<iframe id="box" src="https://open.spotify.com/embed?uri=spotify:user:spotify:playlist:3rgsDhGHZxZ9sB9DQWQfuf" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+	</div>
 </#assign>
 <#include "main.ftl">

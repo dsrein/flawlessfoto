@@ -41,12 +41,12 @@ public class Spotify {
   private String state;
   /* Create a request object. */
   private final ClientCredentialsGrantRequest request;
-  private final SettableFuture<ClientCredentials> responseFuture;
   private String authorizeUrl;
   private String accessToken;
   
   
-  public Spotify(String name) {
+  public Spotify(String name) throws IOException {
+	  
 	  api = Api.builder()
 			  .clientId(ID)
 			  .clientSecret(SECRET)
@@ -54,16 +54,20 @@ public class Spotify {
 			  .build();
 
 	  request = api.clientCredentialsGrant().build();
-
+	  try{
 	  /* Use the request object to make the request, either asynchronously (getAsync) or synchronously (get) */
-	  responseFuture = request.getAsync();
+	  ClientCredentials responseFuture = request.get();
+	  } catch (WebApiException e){
+		  System.out.println("dude i dont know");
+		  
+	  }
 	  this.name = name;
 	  tracksToAdd = new ArrayList<>();
 	  insertIndex = 0;
   }
   
   protected String generateRandString() {
-      String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+      String SALTCHARS = "abcdefghijklmnopqrstuvwxyz1234567890";
       StringBuilder salt = new StringBuilder();
       Random rnd = new Random();
       while (salt.length() < 16) { // length of the random string.
