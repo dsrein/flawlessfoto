@@ -21,6 +21,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.wrapper.spotify.exceptions.WebApiException;
 
 import freemarker.template.Configuration;
 import apis.Spotify;
@@ -46,7 +47,7 @@ public class Main {
 	  private void run() throws IOException{
 
 		 spot = new Spotify("lala");
-		 // spot.getTracksFromKeyword("little bird");
+		 spot.getTracksFromKeyword("little bird");
 		    // Parse command line arguments
 		  runSparkServer();
 		   
@@ -74,6 +75,7 @@ public class Main {
 	    // Setup Spark Routes
 	    Spark.get("/", new FrontHandler(), freeMarker);
 	    Spark.post("/redirect", new LoginHandler());
+	    Spark.post("/getCode", new CodeHandler());
 	  }
 	  
 	  private class LoginHandler implements Route {
@@ -81,12 +83,36 @@ public class Main {
 		    public Object handle(Request arg0, Response arg1) throws Exception {
 		      System.out.println("login");
 		      String url = spot.getAuthrizeUrl();
-		      System.out.println(url.length());
-		      spot.authorize();
+		      System.out.println(url);
+		      String oldUrl = url; 
+		      System.out.println("OLD: " + oldUrl);
 		   //   spot.setUser();
+
 		      return GSON.toJson(ImmutableMap.of("url", url));
 		    }
 	}
+	  
+	  private class CodeHandler implements Route {
+		    @Override
+		    public Object handle(Request arg0, Response arg1) throws Exception {
+		      QueryParamsMap qm = arg0.queryMap();
+		      String url = qm.value("url");
+		      parseCode(url);
+		      String uri = spot.getPlaylist();
+		      return GSON.toJson(ImmutableMap.of("playlistUri", uri));
+		    }
+	}
+	  
+	  private void parseCode (String url) {
+		 String[] urlAr = url.split("=");
+		 spot.authorize(urlAr[1].split("&")[0]);
+		 try {
+			spot.setUser();
+		} catch (IOException | WebApiException e) {
+			System.out.println("ERROR: Could not set the user");
+		}
+		 System.out.println("HELLLOO");
+	  }
 	  
 	  private static class FrontHandler implements TemplateViewRoute {
 		    @Override

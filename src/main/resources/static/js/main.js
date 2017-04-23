@@ -70,3 +70,15 @@ const $button = $("#button");
                     window.location.replace(URL);
     			 });
 });
+
+const $start = $("#start"); 
+    $start.click(function() {
+                 let postParams = {"url" : window.location.href};
+                    $.post("/getCode", postParams, responseJSON => { 
+                        const responseObject = JSON.parse(responseJSON);
+                        let uri = "https://open.spotify.com/embed?uri=" + responseObject.playlistUri;
+                        $("#box").src = uri;
+                        console.log("sent code");
+                    });
+});
+

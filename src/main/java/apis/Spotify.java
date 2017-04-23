@@ -14,11 +14,13 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.exceptions.WebApiException;
 import com.wrapper.spotify.methods.AddTrackToPlaylistRequest;
+import com.wrapper.spotify.methods.GetMySavedTracksRequest;
 import com.wrapper.spotify.methods.PlaylistCreationRequest;
 import com.wrapper.spotify.methods.TrackSearchRequest;
 import com.wrapper.spotify.methods.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.models.AuthorizationCodeCredentials;
 import com.wrapper.spotify.models.ClientCredentials;
+import com.wrapper.spotify.models.LibraryTrack;
 import com.wrapper.spotify.models.Page;
 import com.wrapper.spotify.models.Playlist;
 import com.wrapper.spotify.models.Track;
@@ -36,7 +38,7 @@ public class Spotify {
   private Api api;
   private String userId;
   /* Set the necessary scopes that the application will need from the user */
-  private final List<String> scopes = Arrays.asList("user-read-private", "user-read-email");
+  private final List<String> scopes = Arrays.asList("user-read-private", "user-read-email", "playlist-modify-public");
   /* Set a state. This is used to prevent cross site request forgeries. */
   private String state;
   /* Create a request object. */
@@ -98,13 +100,19 @@ public class Spotify {
   
   public void setUser() throws IOException, WebApiException {
 	  userId = api.getMe().build().get().getId();
-	  System.out.println(userId);
+	  System.out.println("user id : " + userId);
+  }
+  
+  public String getPlaylist() {
+	startAPlaylist();
+  	return playlist.getUri();
   }
 
-  public void authorize() {
+  public void authorize(String code) {
 	  
 	  /* Application details necessary to get an access token */
-	  final String code = redirectURI;
+	  
+	  System.out.println("CODE: " + code);
 
 	  /* Make a token request. Asynchronous requests are made with the .getAsync method and synchronous requests
 	   * are made with the .get method. This holds for all type of requests. */
@@ -121,13 +129,10 @@ public class Spotify {
 	      System.out.println("Luckily, I can refresh it using this refresh token! " +     authorizationCodeCredentials.getRefreshToken());
 	    
 	      /* Set the access token and refresh token so that they are used whenever needed */
-	      api.setAccessToken(authorizationCodeCredentials.getAccessToken());
+	      api.setAccessToken(accessToken);
 	      api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-	      api = Api.builder()
-	    		  .accessToken(authorizationCodeCredentials.getAccessToken())
-	    		  .refreshToken(authorizationCodeCredentials.getRefreshToken())
-	    		  .build();
 	    }
+	    
 
 	    @Override
 	    public void onFailure(Throwable throwable) {
@@ -149,11 +154,13 @@ public class Spotify {
 	     if (results.size() == 0) {
 	    	 return null;
 	     }
-	     tracksToAdd.add(results.get(0).getUri());
-	     if (playlist == null) {
-	    	 startAPlaylist();
+	     if (authorizeUrl != null) {
+	    	 tracksToAdd.add(results.get(0).getUri());
+		     if (playlist == null) {
+		    	 startAPlaylist();
+		     }
+		     addTracksToPlaylist();
 	     }
-	     addTracksToPlaylist();
 	     return results.get(0);
 	    // System.out.println("I got " + trackSearchResult.getTotal() + " results!");
 	  } catch (Exception e) {
@@ -163,11 +170,15 @@ public class Spotify {
   }
   
   public void startAPlaylist() {
-	  final PlaylistCreationRequest request = api.createPlaylist(userId, name)
+	 // api = Api.builder().accessToken(accessToken).build();
+
+	 // System.out.println(accessToken);
+	  final PlaylistCreationRequest request1 = api.createPlaylist(userId, name)
 			  .publicAccess(true)
 			  .build();
+	  	    System.out.println(request1.toString());
 			try {
-			  playlist = request.get();
+			  playlist = request1.get();
 			  System.out.println("You just created this playlist!");
 			  System.out.println("Its title is " + playlist.getName());
 			} catch (Exception e) {
