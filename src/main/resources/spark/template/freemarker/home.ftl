@@ -9,22 +9,22 @@
 		    <img src="fjords.jpg" alt="Fjords" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
-		
+
 		<div class="gallery two">
 		    <img src="fjords.jpg" alt="Fjords" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
-		
+
 		<div class="gallery three">
 		    <img src="forest.jpg" alt="Forest" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
-		
+
 		<div class="gallery two">
 		    <img src="lights.jpg" alt="Northern Lights" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
 		</div>
-		
+
 		<div class="gallery one">
 		    <img src="mountains.jpg" alt="Mountains" width="150" height="125">
 		  <div class="desc">Add a description of the image here</div>
@@ -42,21 +42,21 @@
 	  </a>
 	  <div class="desc">Add a description of the image here</div>
 	</div>
-	
+
 	<div class="gallery">
 	  <a target="_blank" href="forest.jpg">
 	    <img src="forest.jpg" alt="Forest" width="300" height="200">
 	  </a>
 	  <div class="desc">Add a description of the image here</div>
 	</div>
-	
+
 	<div class="gallery">
 	  <a target="_blank" href="lights.jpg">
 	    <img src="lights.jpg" alt="Northern Lights" width="300" height="200">
 	  </a>
 	  <div class="desc">Add a description of the image here</div>
 	</div>
-	
+
 	<div class="gallery">
 	  <a target="_blank" href="mountains.jpg">
 	    <img src="mountains.jpg" alt="Mountains" width="300" height="200">
@@ -71,3 +71,4 @@
 </div>
 </#assign>
 <#include "main.ftl">
+<div data-bttnio-id="btn-4e680ef15e505fe9"></div>
