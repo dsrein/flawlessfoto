@@ -41,6 +41,12 @@
 
 <div id="spot">
 	<iframe id="box" src="https://open.spotify.com/embed?uri=spotify:user:spotify:playlist:3rgsDhGHZxZ9sB9DQWQfuf" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
-	</div>
+	<form>
+  <div class="input-field full">
+    <label for="firstName">Change Playlist Name</label>
+    <input id="firstName" type="text">
+  </div>
+</form>
+</div>
 </#assign>
 <#include "main.ftl">

@@ -76,6 +76,7 @@ public class Main {
 	    Spark.get("/", new FrontHandler(), freeMarker);
 	    Spark.post("/redirect", new LoginHandler());
 	    Spark.post("/getCode", new CodeHandler());
+	    Spark.post("/changePlaylistName", new ChangeNameHandler());
 	  }
 	  
 	  private class LoginHandler implements Route {
@@ -102,6 +103,16 @@ public class Main {
 		      return GSON.toJson(ImmutableMap.of("playlistUri", uri));
 		    }
 	}
+//	private class ChangeNameHandler implements Route {
+//		    @Override
+//		    public Object handle(Request arg0, Response arg1) throws Exception {
+//		      QueryParamsMap qm = arg0.queryMap();
+//		      String name = qm.value("newName");
+//		      spot.changePlaylistName(name);
+//		      String uri = spot.getPlaylist();
+//		      return GSON.toJson(ImmutableMap.of("playlistUri", uri));
+//		    }
+//	}
 	  
 	  private void parseCode (String url) {
 		 String[] urlAr = url.split("=");

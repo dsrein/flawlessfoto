@@ -77,8 +77,32 @@ const $start = $("#start");
                     $.post("/getCode", postParams, responseJSON => { 
                         const responseObject = JSON.parse(responseJSON);
                         let uri = "https://open.spotify.com/embed?uri=" + responseObject.playlistUri;
-                        $("#box").src = uri;
+                        $("#box")[0].src = uri;
                         console.log("sent code");
                     });
 });
+    
+$('input').focus(function(){
+	  var label = $("[for='" + $(this).attr('id') + "']")
+	  label.addClass('raised highlight')
+	})
+	$('input').blur(function(){
+	  var label = $("[for='" + $(this).attr('id') + "']")
+	  label.removeClass('highlight')
+	  if($(this).val().length == 0){
+	    label.removeClass('raised')
+	  }
+	})
+//	
+//$('input').keypress(function (e) {
+//	  if (e.which == 13) {
+//	    let postParams = {"newName" : $('input')[0].value};
+//		$.post("/changePlaylistName", postParams, responseJSON => { 
+//	        const responseObject = JSON.parse(responseJSON);
+//	        let uri = "https://open.spotify.com/embed?uri=" + responseObject.playlistUri;
+//	        $("#box")[0].src = uri;
+//	        console.log("sent code");
+//		}
+//    });
+//});
 

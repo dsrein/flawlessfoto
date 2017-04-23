@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.exceptions.WebApiException;
 import com.wrapper.spotify.methods.AddTrackToPlaylistRequest;
+import com.wrapper.spotify.methods.ChangePlaylistDetailsRequest;
 import com.wrapper.spotify.methods.GetMySavedTracksRequest;
 import com.wrapper.spotify.methods.PlaylistCreationRequest;
 import com.wrapper.spotify.methods.TrackSearchRequest;
@@ -185,6 +186,22 @@ public class Spotify {
 			   System.out.println("Something went wrong!" + e.getMessage());
 			}
   }
+  
+public void changePlaylistName(String newName){
+	final Api api = Api.builder().accessToken(accessToken).build();
+
+	ChangePlaylistDetailsRequest request = api
+	  .changePlaylistDetails(userId, playlist.getId())
+	  .publicAccess(true)
+	  .name(newName)
+	  .build();
+
+	try {
+	  String response = request.get();
+	} catch (Exception e) {
+	  System.out.println("Something went wrong!" + e.getMessage());
+	}
+}
   
   public void addTracksToPlaylist() {
 	  AddTrackToPlaylistRequest request = api.addTracksToPlaylist(userId, playlist.getId() , tracksToAdd)
